@@ -43,9 +43,18 @@ const getBoard = (canvas, numCells = 20) => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
-	const reset = () => {
+	const renderBoard = (board = []) => {
+		board.forEach((row, y) => {
+			row.forEach((color, x) => {
+				color && fillCell(x, y, color);
+			});
+		});
+	};
+
+	const reset = (board) => {
 		clear();
 		drawGrid();
+		renderBoard(board);
 	};
 
 	const getCellCoordinates = (x, y) => {
@@ -84,7 +93,7 @@ const getClickCoordinates = (element, event) => {
 		sock.emit('turn', getCellCoordinates(x, y));
 	};
 
-	reset();
+	sock.on('board', reset);
 	sock.on('message', log);
 	sock.on('turn', ({ x, y, color }) => fillCell(x, y, color));
 
